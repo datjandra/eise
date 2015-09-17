@@ -169,21 +169,23 @@
 			}
 		}
 
-		context.drawImage(bestMatch, width, 0, width, height);
-		for (var i = 0; i < Math.min(window.matchesShown, bestMatches.length); i++) {
-			var color = '#' + Math.floor(Math.random() * 16777215).toString(16);
-			context.fillStyle = color;
-			context.strokeStyle = color;
-			context.fillRect(bestMatches[i].keypoint1[0],
-					bestMatches[i].keypoint1[1], 4, 4);
-			context.fillRect(bestMatches[i].keypoint2[0] + width,
-					bestMatches[i].keypoint2[1], 4, 4);
-			context.beginPath();
-			context.moveTo(bestMatches[i].keypoint1[0],
-					bestMatches[i].keypoint1[1]);
-			context.lineTo(bestMatches[i].keypoint2[0] + width,
-					bestMatches[i].keypoint2[1]);
-			context.stroke();
+		if (bestMatch) {
+			context.drawImage(bestMatch, width, 0, width, height);
+			for (var i = 0; i < Math.min(window.matchesShown, bestMatches.length); i++) {
+				var color = '#' + Math.floor(Math.random() * 16777215).toString(16);
+				context.fillStyle = color;
+				context.strokeStyle = color;
+				context.fillRect(bestMatches[i].keypoint1[0],
+						bestMatches[i].keypoint1[1], 4, 4);
+				context.fillRect(bestMatches[i].keypoint2[0] + width,
+						bestMatches[i].keypoint2[1], 4, 4);
+				context.beginPath();
+				context.moveTo(bestMatches[i].keypoint1[0],
+						bestMatches[i].keypoint1[1]);
+				context.lineTo(bestMatches[i].keypoint2[0] + width,
+						bestMatches[i].keypoint2[1]);
+				context.stroke();
+			}	
 		}
 	};
 </script>
