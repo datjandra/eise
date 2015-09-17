@@ -1,0 +1,191 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html lang="en-US">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>(EISE) Easy Image Search Engine</title>
+<link href="bootstrap-3.3.5-dist/css/bootstrap.min.css" rel="stylesheet">
+<style type="text/css">
+.container {
+	margin-top: 20px;
+}
+
+.item img {
+	width: 200px;
+	height: 200px;
+	margin: 0 auto;
+}
+
+#img_q {
+	width: 200px;
+	height: 200px;
+	margin-top: 20px;
+}
+
+.image-panel {
+	padding: 20px;
+	text-align: center;
+}
+
+#canvas {
+	position: relative;
+}
+</style>
+</head>
+<body>
+	<div class="container">
+		<div class="row">
+			<div class="col-md-12">
+				<div id="img-database" class="carousel slide" data-ride="carousel">
+					<!-- Wrapper for slides -->
+					<div class="carousel-inner" role="listbox">
+						<div class="item active">
+							<img id="img_1" src="images/img_1.jpg" alt="1">
+						</div>
+
+						<div class="item">
+							<img id="img_2" src="images/img_2.jpg" alt="2">
+						</div>
+
+						<div class="item">
+							<img id="img_3" src="images/img_3.jpg" alt="3">
+						</div>
+
+						<div class="item">
+							<img id="img_4" src="images/img_4.jpg" alt="4">
+						</div>
+
+						<div class="item">
+							<img id="img_5" src="images/img_5.jpg" alt="5">
+						</div>
+					</div>
+
+					<!-- Left and right controls -->
+					<a class="left carousel-control" href="#img-database" data-slide="prev">
+						<span class="glyphicon glyphicon-chevron-left" aria-hidden="true">
+						</span>
+					</a>
+    			<a class="right carousel-control" href="#img-database" data-slide="next">
+    				<span class="glyphicon glyphicon-chevron-right" aria-hidden="true">
+						</span>
+    			</a>
+				</div>
+			</div>
+		</div>
+
+		<div class="row">
+			<div class="col-md-4">
+				<div class="image-panel">
+					<div>
+						<select id="selector" onChange="setImage(this)">
+							<option value="q1">Maelstrom</option>
+							<option value="q2">Smiley</option>
+							<option value="q3">Elon</option>
+						</select>
+					</div>
+					<div>
+						<img id="img_q" alt="image query" src="images/q1.jpg">
+					</div>
+				</div>
+			</div>
+			<div class="col-md-8">
+				<div class="image-panel">
+					<canvas id="canvas" width="600" height="295"></canvas>
+				</div>
+			</div>
+		</div>
+	</div>
+</body>
+<script src="tracking.js/build/tracking-min.js" type="text/javascript"></script>
+<script src="jquery-2.1.4/jquery-2.1.4.min.js" type="text/javascript"></script>
+<script src="bootstrap-3.3.5-dist/js/bootstrap.min.js" type="text/javascript"></script>
+<script type="text/javascript">
+	//preload images
+	var q1 = new Image().src = "images/q1.jpg"
+	var q2 = new Image().src = "images/q2.jpg"
+	var q3 = new Image().src = "images/q3.jpg"
+	
+	function setImage(imageSelect) {
+		imgQuery = imageSelect.options[imageSelect.selectedIndex].value;
+		$("#img_q").attr("src", eval(imgQuery));
+		doMatch();
+	}
+
+	var width = 300;
+	var height = 295;
+	var numberImages = 5;
+	var canvas = document.getElementById('canvas');
+	var context = canvas.getContext('2d');
+
+	window.descriptorLength = 256;
+	window.matchesShown = 30;
+
+	var doMatch = function() {
+		var bestScore = 0;
+		var bestMatch = null;
+		var bestMatches = null;
+		tracking.Brief.N = window.descriptorLength;
+
+		var img_q = document.getElementById("img_q");
+		for (var i = 0; i < numberImages; i++) {
+			var img_i = document.getElementById("img_" + (i + 1));
+			context.drawImage(img_q, 0, 0, width, height);
+			context.drawImage(img_i, width, 0, width, height);
+
+			var imageData1 = context.getImageData(0, 0, width, height);
+			var imageData2 = context.getImageData(width, 0, width, height);
+
+			var gray1 = tracking.Image
+					.grayscale(imageData1.data, width, height);
+			var gray2 = tracking.Image
+					.grayscale(imageData2.data, width, height);
+
+			var corners1 = tracking.Fast.findCorners(gray1, width, height);
+			var corners2 = tracking.Fast.findCorners(gray2, width, height);
+
+			var descriptors1 = tracking.Brief.getDescriptors(gray1, width,
+					corners1);
+			var descriptors2 = tracking.Brief.getDescriptors(gray2, width,
+					corners2);
+
+			// slower than reciprocal match but has seemingly better results
+			var matches = tracking.Brief.match(corners1, descriptors1,
+					corners2, descriptors2);
+			matches.sort(function(a, b) {
+				return b.confidence - a.confidence;
+			});
+
+			if (matches.length > 0) {
+				var avgConfidence = 0;
+				for (var j = 0; j < matches.length; j++) {
+					avgConfidence += matches[j].confidence;
+				}
+				avgConfidence /= matches.length;
+
+				if (avgConfidence > bestScore) {
+					bestScore = avgConfidence;
+					bestMatch = img_i;
+					bestMatches = matches;
+				}
+			}
+		}
+
+		context.drawImage(bestMatch, width, 0, width, height);
+		for (var i = 0; i < Math.min(window.matchesShown, bestMatches.length); i++) {
+			var color = '#' + Math.floor(Math.random() * 16777215).toString(16);
+			context.fillStyle = color;
+			context.strokeStyle = color;
+			context.fillRect(bestMatches[i].keypoint1[0],
+					bestMatches[i].keypoint1[1], 4, 4);
+			context.fillRect(bestMatches[i].keypoint2[0] + width,
+					bestMatches[i].keypoint2[1], 4, 4);
+			context.beginPath();
+			context.moveTo(bestMatches[i].keypoint1[0],
+					bestMatches[i].keypoint1[1]);
+			context.lineTo(bestMatches[i].keypoint2[0] + width,
+					bestMatches[i].keypoint2[1]);
+			context.stroke();
+		}
+	};
+</script>
+
+</html>
