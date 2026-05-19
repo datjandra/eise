@@ -2,7 +2,7 @@
 
 A simple yet powerful JavaScript-based image search engine that uses computer vision techniques to find and match similar images. Built with [Tracking.js](https://trackingjs.com/) for the LevelUp 1 hackathon.
 
-**[Live Demo on Google App Engine](http://eise-1071.appspot.com/)**
+**[Live Demo](https://datjandra.github.io/eise/)**
 
 ## Overview
 
@@ -45,16 +45,11 @@ EISE employs sophisticated image processing and feature detection algorithms to 
 
 ```
 eise/
-├── war/                              # Web application root
-│   ├── WEB-INF/
-│   │   └── web.xml                   # Servlet configuration
-│   ├── index.html                    # Main application interface
-│   ├── images/                       # Image database and query samples
-│   │   ├── img_1.jpg - img_5.jpg     # Image database (5 sample images)
-│   │   └── q1.jpg - q3.jpg           # Query image samples
-│   ├── tracking.js/                  # Tracking.js library
-│   ├── bootstrap-3.3.5-dist/         # Bootstrap CSS framework
-│   └── jquery-2.1.4/                 # jQuery library
+├── index.html
+├── images/
+├── tracking.js/
+├── bootstrap-3.3.5-dist/
+├── jquery-2.1.4/
 └── README.md
 ```
 
