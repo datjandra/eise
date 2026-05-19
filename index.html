@@ -100,13 +100,13 @@
 <script src="bootstrap-3.3.5-dist/js/bootstrap.min.js" type="text/javascript"></script>
 <script type="text/javascript">
 	//preload images
-	var q1 = new Image().src = "images/q1.jpg"
-	var q2 = new Image().src = "images/q2.jpg"
-	var q3 = new Image().src = "images/q3.jpg"
+	var q1 = "images/q1.jpg";
+	var q2 = "images/q2.jpg";
+	var q3 = "images/q3.jpg";
 	
 	function setImage(imageSelect) {
 		imgQuery = imageSelect.options[imageSelect.selectedIndex].value;
-		$("#img_q").attr("src", eval(imgQuery));
+		$("#img_q").attr("src", "images/" + imgQuery + ".jpg");
 		doMatch();
 	}
 
@@ -187,6 +187,10 @@
 				context.stroke();
 			}	
 		}
+	};
+
+	window.onload = function() {
+    	doMatch();
 	};
 </script>
 
