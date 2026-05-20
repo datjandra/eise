@@ -1,118 +1,226 @@
 # EISE - Easy Image Search Engine
 
-A simple yet powerful JavaScript-based image search engine that uses computer vision techniques to find and match similar images. Built with [Tracking.js](https://trackingjs.com/) for the LevelUp 1 hackathon.
+A modern, browser-based image matching and visual search application powered by computer vision techniques. EISE compares a query image against a dataset and ranks results based on feature-level similarity using FAST keypoint detection and BRIEF descriptors.
 
-**[Live Demo](https://datjandra.github.io/eise/)**
+**Live Demo:** https://datjandra.github.io/eise/
+
+---
 
 ## Overview
 
-EISE is an innovative web application that demonstrates advanced image matching capabilities using client-side computer vision. Rather than relying on text-based search or metadata, EISE analyzes the visual content of images to find the best matches based on their visual similarities and distinctive features.
+EISE demonstrates real-time, client-side image retrieval using classical computer vision methods. Instead of relying on text tags or metadata, the system analyzes visual structure directly and returns ranked matches based on feature correspondence.
+
+The updated interface focuses on a **clean search-and-explore workflow**:
+
+- A **query panel** for selecting input images
+- A **results grid** showing ranked matches
+- A **modal-based detail viewer** for deep inspection of feature matches
+
+---
+
+## New User Interface & Experience
+
+The application has been redesigned for clarity and usability:
+
+### 🔍 Query Panel (Left Sidebar)
+- Select a query image from a dropdown menu
+- Preview the selected image instantly
+- Run matching with a single button click
+- Live status indicator shows processing state and best score
+
+### 🧩 Results Grid (Main Area)
+- Ranked visual similarity results displayed as cards
+- Each result shows:
+  - Thumbnail preview
+  - Similarity score
+  - Rank position
+- Hover interaction highlights candidate images
+- Click any result to inspect detailed matches
+
+### 🔬 Match Detail View (Modal)
+- Full-screen overlay visualization
+- Side-by-side comparison of query vs matched image
+- Colored feature correspondences:
+  - Keypoints
+  - Match lines between descriptors
+- Focused inspection without cluttering the main UI
+
+This replaces the previous canvas-based side panel approach with a **more modern, modal-driven experience optimized for exploration**.
+
+---
 
 ## How It Works
 
-EISE employs sophisticated image processing and feature detection algorithms to identify and match images:
+EISE uses classical feature-based image matching:
 
-1. **Feature Detection**: The application uses the FAST (Features from Accelerated Segment Test) corner detection algorithm to identify distinctive feature points in images.
+### 1. Feature Detection (FAST)
+The FAST algorithm identifies corner points in images that represent visually distinctive regions.
 
-2. **Feature Descriptor Generation**: Once corner points are identified, the system generates BRIEF (Binary Robust Independent Elementary Features) descriptors for each corner, creating a compact binary fingerprint of the image's visual characteristics.
+### 2. Feature Description (BRIEF)
+Each keypoint is encoded using BRIEF descriptors, producing compact binary feature vectors.
 
-3. **Image Matching**: The engine compares the query image against a database of images by matching their descriptors. It calculates confidence scores based on the quality and number of matching feature points.
+### 3. Feature Matching
+Descriptors from the query image are compared against all dataset images to find correspondences.
 
-4. **Similarity Scoring**: Images are ranked by their average confidence scores, with the best match (highest average confidence) displayed as the top result along with visual indicators showing the matched feature points.
+### 4. Similarity Scoring
+Each candidate image receives a score based on the average confidence of matched features.
 
-5. **Visual Feedback**: The results are displayed with colored lines and points connecting the matched features between the query image and the best match, providing transparency into how the matching algorithm works.
+### 5. Ranking & Visualization
+Results are sorted by similarity score and visualized in a responsive grid. Detailed matches can be inspected via the modal viewer.
+
+---
 
 ## Features
 
-- **Real-Time Image Matching**: Instantly compare a query image against a database of images
-- **Visual Feature Matching**: See exactly which features matched between images with colored overlays
-- **Interactive Query Selection**: Choose from multiple query images (Maelstrom, Smiley, Elon) to search against the database
-- **Responsive Interface**: Built with Bootstrap 3.3.5 for a clean, responsive user experience
-- **Client-Side Processing**: All image processing happens in the browser using Tracking.js, ensuring fast performance and privacy
+- ⚡ Real-time image matching directly in the browser
+- 🧠 Feature-based similarity using FAST + BRIEF
+- 🖼️ Ranked results grid with visual previews
+- 🔬 Interactive match inspection via modal viewer
+- 🎯 Clean separation of search and exploration workflow
+- 🔒 Fully client-side processing (no backend required)
+- 📱 Responsive UI built with Bootstrap
+
+---
 
 ## Technology Stack
 
-- **Tracking.js**: JavaScript library for computer vision and image processing
-  - FAST corner detection algorithm
-  - BRIEF feature descriptor generation
-  - Image matching and correlation
-- **Bootstrap 3.3.5**: Frontend framework for responsive UI design
-- **jQuery 2.1.4**: DOM manipulation and utility functions
-- **HTML5 Canvas**: For rendering images and visualization of matched features
-- **Google App Engine**: Cloud hosting platform
+- **Tracking.js**
+  - FAST corner detection
+  - BRIEF feature descriptors
+  - Descriptor matching utilities
+
+- **Bootstrap 3.3.5**
+  - Responsive layout system
+  - UI components (grid, modal, buttons)
+
+- **jQuery 2.1.4**
+  - DOM manipulation
+  - Event handling
+
+- **HTML5 Canvas**
+  - Feature visualization
+  - Side-by-side image rendering
+  - Match line drawing
+
+---
 
 ## Project Structure
-
-```
 eise/
 ├── index.html
 ├── images/
+│ ├── img_1.jpg
+│ ├── img_2.jpg
+│ ├── img_3.jpg
+│ ├── img_4.jpg
+│ └── img_5.jpg
 ├── tracking.js/
 ├── bootstrap-3.3.5-dist/
 ├── jquery-2.1.4/
 └── README.md
-```
+
+---
 
 ## How to Use
 
-1. **Select a Query Image**: Use the dropdown menu to choose a query image (Maelstrom, Smiley, or Elon)
-2. **View Results**: The canvas displays a side-by-side comparison of the query image and the best matching image from the database
-3. **Analyze Matches**: Colored lines and points on the canvas show the matched features, helping you understand how the algorithm identified similar images
+1. **Select a Query Image**
+   - Choose an image from the dropdown in the query panel
+
+2. **Run Matching**
+   - Click “Run Matching” to compute similarity scores across the dataset
+
+3. **Explore Results**
+   - View ranked results in the grid
+   - Each card shows similarity score and preview
+
+4. **Inspect Matches**
+   - Click any result to open detailed feature matching view
+   - Analyze keypoint correspondences between images
+
+---
 
 ## Algorithm Details
 
 ### FAST Corner Detection
-The FAST algorithm identifies corner points in images by examining the intensity of pixels in a circular neighborhood. These corner points represent distinctive features that are likely to be found in other similar images.
+Detects high-contrast keypoints that are stable under transformations.
 
 ### BRIEF Descriptors
-BRIEF generates a compact binary descriptor for each corner point by comparing pixel intensities at specific locations around that corner. This creates a fingerprint that can be rapidly compared with other descriptors.
+Encodes local pixel comparisons around keypoints into compact binary vectors.
 
-### Matching Confidence
-The matching algorithm computes matches between descriptors of the query image and each database image. For each image, the system calculates an average confidence score based on all matched points. Higher scores indicate greater visual similarity.
+### Matching Strategy
+- Descriptor matching between query and dataset images
+- Confidence scoring based on match quality
+- Averaging used to compute final similarity score per image
+
+---
 
 ## Parameters
 
-The application includes tunable parameters that affect matching behavior:
+- **Descriptor Length (`descriptorLength`)**  
+  Controls BRIEF descriptor size (default: 256 bits)
 
-- **Descriptor Length (`descriptorLength`)**: Set to 256 bits, controlling the precision of feature descriptors
-- **Matches Shown (`matchesShown`)**: Limited to 30 matches for visualization clarity, though the algorithm may find more
+- **Match Visualization Limit (`slice(0, 25)`)**  
+  Limits displayed matches for clarity in UI
+
+---
 
 ## Use Cases
 
-- **Product Discovery**: Find similar items in an image database
-- **Content Recommendation**: Suggest visually similar images
-- **Reverse Image Search**: Locate images with similar visual characteristics
-- **Computer Vision Learning**: Understand how feature detection and matching work
+- Visual similarity search
+- Reverse image lookup prototypes
+- Computer vision education and demos
+- Feature matching experimentation
+- Interactive ML/CV UI prototypes
+
+---
 
 ## Browser Compatibility
 
-EISE requires a modern web browser with support for:
-- HTML5 Canvas API
-- JavaScript ES5+
-- WebGL (optional, for accelerated processing)
+Requires a modern browser supporting:
+
+- HTML5 Canvas
+- ES5+ JavaScript
+- DOM image processing APIs
+
+---
 
 ## Development Context
 
-This project was developed for the LevelUp 1 hackathon, showcasing practical applications of computer vision techniques in web development. It demonstrates how sophisticated image processing can be accomplished entirely on the client-side using JavaScript libraries.
+EISE was originally built for a hackathon and has been refactored into a more modern UI architecture emphasizing:
+
+- Separation of search and visualization
+- Cleaner interaction model
+- Scalable result presentation
+- Improved usability for exploration tasks
+
+---
 
 ## Performance Notes
 
-- Image matching is performed in the browser, making the application responsive and independent of backend server performance
-- Processing time scales with image size and the number of images in the database
-- The FAST and BRIEF algorithms are optimized for real-time performance on standard hardware
+- Entire pipeline runs client-side
+- Performance depends on:
+  - Image resolution
+  - Number of dataset images
+  - CPU performance for feature extraction
+- No server round-trips required
+
+---
 
 ## Future Enhancements
 
-Potential improvements to the system could include:
-- Larger image databases for more comprehensive search results
-- Support for custom image uploads
-- Fine-tuned algorithm parameters for domain-specific matching
-- Mobile optimization
-- Performance benchmarking and optimization
+- Upload custom query images
+- Larger-scale dataset indexing
+- WebGL-accelerated feature extraction
+- Better descriptor matching (e.g., FLANN-style optimization)
+- Mobile-first UI redesign
+- Clustering-based result grouping
+
+---
 
 ## License
 
-This project was created for the LevelUp 1 hackathon. Please refer to the repository for specific licensing information.
+Project created for the LevelUp 1 hackathon. See repository for license details.
+
+---
 
 ## Author
 
@@ -120,4 +228,4 @@ Created by [datjandra](https://github.com/datjandra)
 
 ---
 
-For more information about Tracking.js, visit: https://trackingjs.com/
+For more information on Tracking.js: https://trackingjs.com/
