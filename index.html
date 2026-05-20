@@ -264,6 +264,10 @@ async function doMatch() {
     for (let i = 1; i <= numberImages; i++) {
 
         const img_i = document.getElementById("img_" + i);
+        if (!img_i) {
+            console.warn("Missing DOM element: img_" + i);
+            continue;
+        }
 
         const tmpCanvas = document.createElement("canvas");
         tmpCanvas.width = width * 2;
@@ -274,8 +278,8 @@ async function doMatch() {
         await loadImage(img_q);
         await loadImage(img_i);
 
-        if (!img_q.naturalWidth || !img_i.naturalWidth) {
-            console.warn("Skipping invalid image", img_i.src);
+        if (!img_q || !img_i || !img_q.naturalWidth || !img_i.naturalWidth) {
+            console.warn("Skipping invalid image", i, img_i);
             continue;
         }
         
