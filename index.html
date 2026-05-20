@@ -207,7 +207,7 @@ function renderResults(results) {
             </div>
         `;
 
-        div.onclick = () => showDetail(r);
+        div.onclick = () => { showDetail(r); };
 
         container.appendChild(div);
     });
@@ -238,7 +238,7 @@ function drawMatch(canvasCtx, queryImg, matchImg, matches) {
     });
 }
 
-function showDetail(result) {
+async function showDetail(result) {
     const q = document.getElementById("img_q");
     const m = result.img;
 
