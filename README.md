@@ -108,6 +108,7 @@ Results are sorted by similarity score and presented in a ranked grid. Selected 
 ---
 
 ## Project Structure
+```
 eise/
 ├── index.html
 ├── images/
@@ -120,6 +121,7 @@ eise/
 ├── bootstrap-3.3.5-dist/
 ├── jquery-2.1.4/
 └── README.md
+```
 
 ---
 
