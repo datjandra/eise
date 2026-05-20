@@ -163,8 +163,25 @@ function setStatus(msg) {
 
 function loadImage(img) {
     return new Promise(resolve => {
-        if (img.complete) resolve(img);
-        else img.onload = () => resolve(img);
+
+        if (!img) return resolve();
+
+        if (img.decode) {
+            img.decode()
+                .then(() => resolve(img))
+                .catch(() => resolve(img));
+            return;
+        }
+
+        if (img.complete && img.naturalWidth > 0) {
+            return resolve(img);
+        }
+
+        img.onload = () => resolve(img);
+        img.onerror = () => {
+            console.warn("Image failed to load:", img.src);
+            resolve(img);
+        };
     });
 }
 
@@ -225,6 +242,9 @@ function showDetail(result) {
     const q = document.getElementById("img_q");
     const m = result.img;
 
+    await loadImage(q);
+    await loadImage(m);
+
     drawMatch(mctx, q, m, result.matches);
 
     $("#detailModal").modal("show");
@@ -251,6 +271,14 @@ async function doMatch() {
 
         const cctx = tmpCanvas.getContext("2d");
 
+        await loadImage(img_q);
+        await loadImage(img_i);
+
+        if (!img_q.naturalWidth || !img_i.naturalWidth) {
+            console.warn("Skipping invalid image", img_i.src);
+            continue;
+        }
+        
         cctx.drawImage(img_q, 0, 0, width, height);
         cctx.drawImage(img_i, width, 0, width, height);
 
@@ -289,7 +317,11 @@ async function doMatch() {
 
     renderResults(results);
 
-    setStatus("Done. Best match score: " + results[0].score.toFixed(3));
+    if (results.length > 0) {
+        setStatus("Done. Best match score: " + results[0].score.toFixed(3));
+    } else {
+        setStatus("Done. No matches found");
+    }
 }
 
 // EVENTS
